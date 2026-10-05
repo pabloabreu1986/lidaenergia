@@ -1,0 +1,58 @@
+/*
+ * Controles base portados de shadcn/ui (Button e Input, registry new-york-v4).
+ * Fuente: https://github.com/shadcn-ui/ui (apps/v4/registry/new-york-v4/ui/{button,input}.tsx)
+ * Copyright (c) 2023 shadcn — MIT License (texto completo en docs/21st-sources/LICENSE-shadcn-MIT.md).
+ * Port a CSS plano para Astro: se conservan las variantes (default, secondary, outline, ghost, link),
+ * los tamaños (sm, default, lg, icon), el anillo de foco de 3px, el estado disabled y aria-invalid.
+ * Modificaciones: tokens de LIDA, alturas mínimas de 44–56px (objetivo táctil), variante on-dark.
+ */
+
+.btn {
+  --btn-bg: var(--pizarra);
+  --btn-fg: var(--blanco);
+  --btn-border: transparent;
+  --btn-bg-hover: #24394a;
+  --btn-fg-hover: var(--btn-fg);
+  --btn-ring: rgb(31 78 121 / 0.45);
+  display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; gap: 0.55rem;
+  min-height: 48px; padding: 0.7rem 1.35rem;
+  border: 1px solid var(--btn-border); border-radius: var(--r-control);
+  background: var(--btn-bg); color: var(--btn-fg);
+  font: inherit; font-size: 1rem; font-weight: 600; line-height: 1.2; text-decoration: none; white-space: nowrap;
+  cursor: pointer; outline: none;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.btn:hover { background: var(--btn-bg-hover); color: var(--btn-fg-hover); text-decoration: none; }
+.btn:focus-visible { box-shadow: 0 0 0 3px var(--btn-ring); outline: 2px solid transparent; }
+.btn:disabled, .btn[aria-disabled='true'] { pointer-events: none; opacity: 0.5; }
+.btn svg { width: 1.15em; height: 1.15em; flex-shrink: 0; pointer-events: none; }
+
+/* default → acento de marca: amarillo con texto pizarra (8,9:1) */
+.btn--default { --btn-bg: var(--sol); --btn-fg: var(--pizarra); --btn-bg-hover: var(--sol-hover); --btn-fg-hover: var(--pizarra); }
+.btn--secondary { --btn-bg: var(--pizarra); --btn-fg: var(--blanco); --btn-bg-hover: #24394a; }
+.btn--outline { --btn-bg: transparent; --btn-fg: var(--pizarra); --btn-border: #b9b7ae; --btn-bg-hover: var(--blanco); --btn-fg-hover: var(--pizarra); }
+.btn--ghost { --btn-bg: transparent; --btn-fg: var(--pizarra); --btn-bg-hover: var(--papel-2); --btn-fg-hover: var(--pizarra); }
+.btn--link { --btn-bg: transparent; --btn-fg: var(--pizarra); --btn-bg-hover: transparent; min-height: 44px; padding-inline: 0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.25em; }
+.btn--link:hover { text-decoration-thickness: 2px; }
+.btn--link.btn--lg, .btn--link.btn--sm { padding-inline: 0; }
+
+/* En superficies oscuras: las variantes neutras se invierten; default sigue siendo amarillo con texto pizarra */
+.surface-dark .btn:focus-visible { box-shadow: none; outline: 3px solid var(--sol); outline-offset: 3px; }
+.surface-dark .btn--secondary { --btn-bg: var(--blanco); --btn-fg: var(--pizarra); --btn-bg-hover: var(--papel-2); --btn-fg-hover: var(--pizarra); }
+.surface-dark .btn--outline { --btn-fg: var(--blanco); --btn-border: #6b7a87; --btn-bg-hover: var(--blanco); --btn-fg-hover: var(--pizarra); }
+.surface-dark .btn--ghost, .surface-dark .btn--link { --btn-fg: var(--blanco); --btn-bg-hover: rgb(255 255 255 / 0.08); --btn-fg-hover: var(--blanco); }
+
+.btn--sm { min-height: 44px; padding: 0.55rem 1rem; font-size: 0.95rem; }
+.btn--lg { min-height: 56px; padding: 0.9rem 1.75rem; font-size: 1.0625rem; }
+.btn--icon { min-height: 44px; min-width: 44px; padding: 0; }
+
+/* Input (port de shadcn Input). Se mantiene para el formulario, hoy desactivado. */
+.input {
+  width: 100%; min-width: 0; min-height: 48px; padding: 0.6rem 0.85rem;
+  border: 1px solid #a9b2ba; border-radius: var(--r-control); background: var(--blanco); color: var(--pizarra);
+  font: inherit; font-size: 1rem; outline: none; transition: border-color 0.18s, box-shadow 0.18s;
+}
+.input::placeholder { color: var(--pizarra-3); }
+.input:focus-visible { border-color: var(--celula); box-shadow: 0 0 0 3px rgb(31 78 121 / 0.3); }
+.input:disabled { pointer-events: none; cursor: not-allowed; opacity: 0.5; }
+.input[aria-invalid='true'] { border-color: #b42318; box-shadow: 0 0 0 3px rgb(180 35 24 / 0.2); }

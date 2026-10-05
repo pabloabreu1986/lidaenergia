@@ -1,0 +1,55 @@
+---
+import { FOOTER_LINKS, SITE, telHref, waHref } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="wrap ftr__grid">
+    <div class="ftr__brand">
+      <p class="ftr__name">{SITE.name}</p>
+      <p>Instalación de placas solares, baterías y cargadores de coche eléctrico en Madrid.</p>
+    </div>
+    <nav aria-label="Pie de página">
+      <p class="ftr__h">Web</p>
+      <ul>{FOOTER_LINKS.map((n) => <li><a href={n.href}>{n.label}</a></li>)}</ul>
+    </nav>
+    <div>
+      <p class="ftr__h">Contacto</p>
+      <ul>
+        <li><a href={telHref} data-ubicacion="pie">{SITE.phoneDisplay}</a></li>
+        <li><a href={waHref()} rel="noopener" target="_blank" data-ubicacion="pie">WhatsApp</a></li>
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        <li class="ftr__txt">{SITE.hours}</li>
+      </ul>
+    </div>
+    <div>
+      <p class="ftr__h">Síguenos</p>
+      <ul>
+        <li><a href={SITE.googleMaps} rel="noopener" target="_blank">Reseñas en Google</a></li>
+        <li><a href={SITE.instagram} rel="noopener" target="_blank">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap ftr__legal">
+    <p>© {year} {SITE.legalName}</p>
+    <p class="ftr__links"><a href="/aviso-legal/">Aviso legal</a><a href="/privacidad/">Privacidad</a></p>
+  </div>
+</footer>
+
+<style>
+  .ftr { background: var(--papel-2); color: var(--pizarra-2); padding-block: clamp(3rem, 6vw, 5rem) 1.5rem; font-size: 0.95rem; border-top: 1px solid var(--linea); }
+  .ftr a { color: var(--pizarra); text-decoration: none; }
+  .ftr a:hover { text-decoration: underline; }
+  .ftr__grid { display: grid; gap: 2rem; grid-template-columns: 1fr 1fr; }
+  .ftr__brand { grid-column: 1 / -1; max-width: 26rem; }
+  .ftr__name { font-size: 1.4rem; font-weight: 680; letter-spacing: -0.02em; color: var(--pizarra); margin-bottom: 0.4rem; }
+  .ftr__h { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pizarra-3); margin-bottom: 0.6rem; }
+  .ftr ul { list-style: none; padding: 0; margin: 0; }
+  .ftr li { margin: 0; }
+  .ftr li a { display: inline-flex; align-items: center; min-height: 40px; }
+  .ftr__txt { padding-top: 0.5rem; }
+  .ftr__legal { margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--linea); display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; justify-content: space-between; font-size: 0.85rem; }
+  .ftr__legal p { margin: 0; }
+  .ftr__links { display: flex; gap: 1.25rem; }
+  .ftr__links a { display: inline-flex; align-items: center; min-height: 44px; }
+  @media (min-width: 64rem) { .ftr__grid { grid-template-columns: 2fr 1.2fr 1.2fr 1fr; } .ftr__brand { grid-column: auto; } }
+</style>

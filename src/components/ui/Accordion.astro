@@ -1,0 +1,80 @@
+---
+/*
+ * Port a Astro de "Accordion Ghost" de Spectrum UI (Arihant Jain).
+ * Fuente: https://ui.spectrumhq.in/r/accordion-ghost.json (uso) y
+ *         https://ui.spectrumhq.in/r/accordion-dependencies.json (app/registry/spectrumui/accordion.tsx)
+ * Licencia: Apache License 2.0 — https://github.com/arihantcodes/spectrum-ui
+ *           (texto completo en docs/21st-sources/LICENSE-spectrumui-Apache-2.0.txt).
+ * Modificaciones (Apache-2.0 §4b): reescrito sin React ni Radix. Se conserva el patrón ghost:
+ * numeración 01/02/…, indicador "plus" que rota y pierde el trazo vertical al abrir, type="single"
+ * collapsible, botón dentro de encabezado, región con aria-labelledby. El contenido está en el HTML
+ * (hidden="until-found") para que sea indexable y encontrable con la búsqueda del navegador.
+ */
+interface Item { q: string; a: string }
+interface Props { items: Item[]; id: string; headingLevel?: 'h3' | 'h4' }
+const { items, id, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+---
+<div class="acc" data-accordion data-type="single" id={id}>
+  {items.map((it, i) => {
+    const n = String(i + 1).padStart(2, '0');
+    return (
+      <div class="acc__item" data-state="closed">
+        <H class="acc__h">
+          <button type="button" class="acc__trigger" id={`${id}-t${i}`} aria-expanded="false" aria-controls={`${id}-p${i}`} data-accordion-trigger>
+            <span class="acc__num" aria-hidden="true">{n}</span>
+            <span class="acc__q">{it.q}</span>
+            <span class="acc__plus" aria-hidden="true"><span></span><span></span></span>
+          </button>
+        </H>
+        <div class="acc__panel" id={`${id}-p${i}`} role="region" aria-labelledby={`${id}-t${i}`} hidden="until-found">
+          <div class="acc__body" set:html={it.a} />
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-accordion]').forEach((root) => {
+    const triggers = [...root.querySelectorAll<HTMLButtonElement>('.acc__trigger')];
+    const set = (btn: HTMLButtonElement, open: boolean) => {
+      const panel = document.getElementById(btn.getAttribute('aria-controls')!)!;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.closest('.acc__item')!.setAttribute('data-state', open ? 'open' : 'closed');
+      if (open) panel.removeAttribute('hidden'); else panel.setAttribute('hidden', 'until-found');
+    };
+    triggers.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const open = btn.getAttribute('aria-expanded') !== 'true';
+        if (open && root.dataset.type === 'single') triggers.forEach((t) => t !== btn && set(t, false));
+        set(btn, open);
+      });
+      // Si la búsqueda del navegador revela un panel, sincronizar el estado.
+      document.getElementById(btn.getAttribute('aria-controls')!)!.addEventListener('beforematch', () => set(btn, true));
+    });
+  });
+</script>
+
+<style>
+  .acc { border-top: 1px solid var(--linea); }
+  .acc__item { border-bottom: 1px solid var(--linea); }
+  .acc__h { margin: 0; font-size: inherit; font-weight: inherit; letter-spacing: 0; line-height: inherit; }
+  .acc__trigger {
+    display: grid; grid-template-columns: 2.25rem 1fr 1rem; align-items: center; gap: 0.75rem;
+    width: 100%; min-height: 56px; padding: 1.15rem 0; border: 0; background: none; cursor: pointer;
+    font: inherit; font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem); font-weight: 600; line-height: 1.35; text-align: left; color: var(--pizarra);
+    border-radius: 8px; transition: color 0.2s ease;
+  }
+  .acc__trigger:hover .acc__q { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+  .acc__num { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; color: var(--pizarra-3); font-variant-numeric: tabular-nums; }
+  .acc__plus { position: relative; width: 1rem; height: 1rem; transition: transform 0.25s ease-out; }
+  .acc__plus span { position: absolute; background: currentColor; border-radius: 2px; }
+  .acc__plus span:first-child { left: 0; top: 50%; width: 1rem; height: 1.5px; transform: translateY(-50%); }
+  .acc__plus span:last-child { top: 0; left: 50%; width: 1.5px; height: 1rem; transform: translateX(-50%); transition: transform 0.25s ease-out; }
+  .acc__item[data-state='open'] .acc__plus { transform: rotate(180deg); }
+  .acc__item[data-state='open'] .acc__plus span:last-child { transform: translateX(-50%) scaleY(0); }
+  .acc__body { padding: 0 2rem 1.5rem 3rem; color: var(--pizarra-2); max-width: 62ch; }
+  .acc__body :global(p:last-child) { margin-bottom: 0; }
+  @media (max-width: 30rem) { .acc__trigger { grid-template-columns: 1.75rem 1fr 1rem; } .acc__body { padding-left: 2.5rem; padding-right: 0; } }
+</style>

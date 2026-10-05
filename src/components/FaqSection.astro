@@ -1,0 +1,28 @@
+---
+// Bloque de FAQ independiente: encabezado + acordeón (port Spectrum UI). Dos columnas en escritorio.
+import SectionHeading from './SectionHeading.astro';
+import Accordion from './ui/Accordion.astro';
+interface Item { q: string; a: string }
+interface Props { items: Item[]; id: string; eyebrow?: string; title?: string; description?: string; surface?: string }
+const {
+  items, id,
+  eyebrow = 'Antes de decidir',
+  title = 'Las dudas, claras.',
+  description = 'Coste, baterías, trámites y plazos: lo que conviene saber antes de instalar.',
+  surface = '',
+} = Astro.props;
+---
+<section class:list={['section', surface]} aria-labelledby={`${id}-h`}>
+  <div class="wrap faq">
+    <SectionHeading eyebrow={eyebrow} title={title} description={description} id={`${id}-h`} class="faq__head" />
+    <Accordion items={items} id={id} />
+  </div>
+</section>
+
+<style>
+  .faq { display: grid; gap: 2.5rem; }
+  @media (min-width: 64rem) {
+    .faq { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 5rem; align-items: start; }
+    .faq :global(.faq__head) { position: sticky; top: calc(var(--header-h) + 2rem); }
+  }
+</style>

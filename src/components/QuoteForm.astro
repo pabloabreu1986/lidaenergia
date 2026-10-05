@@ -1,0 +1,83 @@
+---
+import { SITE } from '../data/site';
+interface Props { id?: string; origen?: string }
+const { id = 'presupuesto', origen = 'web' } = Astro.props;
+---
+<form class="qf" id={id} method="post" action={SITE.formEndpoint || '#'} data-wa={SITE.whatsapp} data-endpoint={SITE.formEndpoint}>
+  <input type="hidden" name="origen" value={origen} />
+  <div class="qf__hp" aria-hidden="true">
+    <label>No rellenar <input type="text" name="web" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <div class="qf__row">
+    <label for={`${id}-nombre`}>Nombre</label>
+    <input class="input" id={`${id}-nombre`} name="nombre" type="text" autocomplete="name" required />
+  </div>
+  <div class="qf__row">
+    <label for={`${id}-tel`}>Teléfono</label>
+    <input class="input" id={`${id}-tel`} name="telefono" type="tel" autocomplete="tel" inputmode="tel" required pattern="[0-9 +()-]{9,}" />
+  </div>
+  <div class="qf__row">
+    <label for={`${id}-muni`}>Municipio</label>
+    <input class="input" id={`${id}-muni`} name="municipio" type="text" autocomplete="address-level2" placeholder="Ej.: Madrid, Alcobendas…" required />
+  </div>
+  <div class="qf__row">
+    <label for={`${id}-tipo`}>¿Dónde quieres las placas?</label>
+    <select class="input" id={`${id}-tipo`} name="tipo">
+      <option>Vivienda unifamiliar o chalet</option>
+      <option>Comunidad de vecinos</option>
+      <option>Empresa o nave</option>
+      <option>Solo cargador de coche</option>
+      <option>Mantenimiento o revisión</option>
+    </select>
+  </div>
+  <div class="qf__row">
+    <label for={`${id}-msg`}>Cuéntanos algo más <span>(opcional)</span></label>
+    <textarea class="input" id={`${id}-msg`} name="mensaje" rows="3"></textarea>
+  </div>
+  <div class="qf__check">
+    <input class="input" id={`${id}-priv`} name="privacidad" type="checkbox" required />
+    <label for={`${id}-priv`}>Acepto que LIDA Energía use mis datos para contactarme sobre mi presupuesto. <a href="/privacidad/">Política de privacidad</a>.</label>
+  </div>
+  <button class="btn btn--sol qf__send" type="submit">Pedir presupuesto</button>
+  <p class="qf__note">Te llamamos en horario laboral. Sin compromiso.</p>
+  <p class="qf__status" role="status" aria-live="polite"></p>
+</form>
+
+<script>
+  // Si no hay endpoint configurado, el formulario abre WhatsApp con los datos.
+  const huboError = new URLSearchParams(location.search).has('error');
+  document.querySelectorAll<HTMLFormElement>('form.qf').forEach((form) => {
+    if (huboError) {
+      const st = form.querySelector('.qf__status');
+      if (st) st.textContent = 'No hemos podido enviar tu solicitud. Revisa que el nombre, el teléfono y el municipio estén completos, o llámanos.';
+    }
+    form.addEventListener('submit', (e) => {
+      if (form.dataset.endpoint) return; // envío normal al PHP
+      e.preventDefault();
+      const d = new FormData(form);
+      const txt = `Hola, quiero un presupuesto.\nNombre: ${d.get('nombre')}\nTeléfono: ${d.get('telefono')}\nMunicipio: ${d.get('municipio')}\nTipo: ${d.get('tipo')}\n${d.get('mensaje') || ''}`;
+      window.open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(txt)}`, '_blank', 'noopener');
+    });
+  });
+</script>
+
+<style>
+  .qf { display: grid; gap: 1rem; background: var(--blanco); color: var(--pizarra); padding: clamp(1.25rem, 3vw, 2rem); border-radius: var(--r-control); border: 1px solid var(--linea); }
+  .qf__row { display: grid; gap: 0.35rem; }
+  .qf label { font-weight: 600; font-size: 0.98rem; }
+  .qf label span { font-weight: 400; color: var(--pizarra-2); }
+  .qf input[type='text'], .qf input[type='tel'], .qf select, .qf textarea {
+    font: inherit; width: 100%; min-height: 48px; padding: 0.6rem 0.75rem;
+    border: 1.5px solid #9aa8b3; border-radius: var(--r-control); background: var(--blanco); color: var(--pizarra);
+  }
+  .qf input:focus-visible, .qf select:focus-visible, .qf textarea:focus-visible { outline: 3px solid var(--celula); outline-offset: 1px; border-color: var(--celula); }
+  .qf__check { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; align-items: start; }
+  .qf__check input { width: 1.3rem; height: 1.3rem; margin-top: 0.2rem; accent-color: var(--celula); }
+  .qf__check label { font-weight: 400; font-size: 0.9rem; }
+  .qf__send { width: 100%; font-size: 1.1rem; }
+  .qf__note { margin: 0; font-size: 0.88rem; color: var(--pizarra-2); }
+  .qf__status { margin: 0; font-weight: 600; color: #a01b1b; }
+  .qf__status:empty { display: none; }
+  .qf__hp { position: absolute; left: -9999px; }
+</style>

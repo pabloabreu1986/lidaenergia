@@ -1,0 +1,45 @@
+---
+// Cierre de contacto en superficie oscura. Los botones usan variantes válidas sobre oscuro (ui.css).
+import Button from './ui/Button.astro';
+import { SITE, telHref, waHref } from '../data/site';
+interface Props { eyebrow?: string; title?: string; text?: string; ubicacion?: string; id?: string }
+const {
+  eyebrow = 'Tu instalación empieza aquí',
+  title = 'Cuéntanos qué tienes en mente.',
+  text = 'Llámanos o escríbenos por WhatsApp y estudiamos tu caso. Si tienes a mano una factura de luz, mejor.',
+  ubicacion = 'banda',
+  id,
+} = Astro.props;
+---
+<section class="section surface-dark cta" data-cta-band id={id} aria-labelledby={`${ubicacion}-h`}>
+  <div class="wrap cta__grid">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 id={`${ubicacion}-h`}>{title}</h2>
+      <p class="subtitle">{text}</p>
+    </div>
+    <div class="cta__side">
+      <div class="cta__btns">
+        <Button href={telHref} size="lg" icon="phone" ubicacion={ubicacion}>Llamar ahora</Button>
+        <Button href={waHref()} size="lg" variant="outline" icon="whatsapp" ubicacion={ubicacion} external>Escribir por WhatsApp</Button>
+      </div>
+      <dl class="cta__dl">
+        <div><dt>Teléfono y WhatsApp</dt><dd><a href={telHref} data-ubicacion={ubicacion}>{SITE.phoneDisplay}</a></dd></div>
+        <div><dt>Email</dt><dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd></div>
+        <div><dt>Horario</dt><dd>{SITE.hours}</dd></div>
+        <div><dt>Zona</dt><dd>Madrid y Comunidad de Madrid</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta__grid { display: grid; gap: 2.5rem; align-items: end; }
+  .cta h2 { max-width: 14ch; }
+  .cta__btns { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2rem; }
+  .cta__dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2rem; margin: 0; padding-top: 1.75rem; border-top: 1px solid var(--linea-oscura); }
+  .cta__dl dt { font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-claro); margin-bottom: 0.25rem; }
+  .cta__dl dd { margin: 0; font-weight: 560; }
+  @media (max-width: 30rem) { .cta__btns :global(.btn) { width: 100%; } .cta__dl { grid-template-columns: 1fr; } }
+  @media (min-width: 64rem) { .cta__grid { grid-template-columns: 1.1fr 1fr; gap: 5rem; } }
+</style>

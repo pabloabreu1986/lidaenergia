@@ -1,0 +1,109 @@
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo.woff2') format('woff2-variations'), url('/fonts/archivo.woff2') format('woff2');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Color */
+  --pizarra: #17232e;
+  --pizarra-2: #3d4b57;
+  --pizarra-3: #5d6b77;
+  --sol: #f2b01e;
+  --sol-hover: #ffc23f;
+  --sol-tinta: #8a5a00;      /* amarillo oscuro apto para texto pequeño sobre claro (≥4.5:1) */
+  --blanco: #ffffff;
+  --papel: #f6f5f1;          /* fondo cálido muy claro */
+  --papel-2: #ecebe5;
+  --linea: #dcdad2;
+  --linea-oscura: #2e3c49;
+  --celula: #1f4e79;
+  --texto-claro: #c8d1d9;
+
+  /* Tipografía */
+  --font: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fs-display: clamp(2.75rem, 1.96rem + 4.76vw, 7rem);   /* ≈50px@390 · ≈100px@1440 */
+  --fs-h1: clamp(2.6rem, 2rem + 3.62vw, 5.5rem);           /* ≈46px@390 · ≈84px@1440 */
+  --fs-h2: clamp(2.1rem, 1.77rem + 2.48vw, 4.5rem);        /* ≈38px@390 · ≈64px@1440 */
+  --fs-h3: clamp(1.4rem, 1.25rem + 0.6vw, 1.875rem);
+  --fs-sub: clamp(1.0625rem, 0.95rem + 0.45vw, 1.375rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-eyebrow: 0.78rem;
+
+  /* Espacio */
+  --wrap: 80rem;
+  --gutter: clamp(1rem, 5vw, 4rem);
+  --section: clamp(3.5rem, 2rem + 6.5vw, 9rem);
+  --r-control: 10px;
+  --r-media: 20px;
+  --header-h: 4.5rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + 1rem); }
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--pizarra);
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  font-stretch: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--celula); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+a:hover { color: var(--pizarra); text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--celula); outline-offset: 3px; border-radius: 4px; }
+
+h1, h2, h3 { margin: 0; font-weight: 680; font-stretch: 100%; text-wrap: balance; }
+h1 { font-size: var(--fs-h1); line-height: 1.02; letter-spacing: -0.035em; }
+h2 { font-size: var(--fs-h2); line-height: 1.04; letter-spacing: -0.03em; }
+h3 { font-size: var(--fs-h3); line-height: 1.2; letter-spacing: -0.015em; font-weight: 640; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin-bottom: 0.35em; }
+
+.display { font-size: var(--fs-display); line-height: 1; letter-spacing: -0.04em; font-weight: 660; }
+.eyebrow {
+  display: block; margin: 0 0 1.25rem;
+  font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--pizarra-2);
+}
+.subtitle { font-size: var(--fs-sub); line-height: 1.5; color: var(--pizarra-2); max-width: 48ch; margin: 1.5rem 0 0; text-wrap: pretty; }
+
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+.section { padding-block: var(--section); }
+.surface-white { background: var(--blanco); }
+.surface-paper-2 { background: var(--papel-2); }
+
+/* Superficie oscura: solo los enlaces de texto heredan el acento; los botones mantienen su variante. */
+.surface-dark { background: var(--pizarra); color: var(--blanco); }
+.surface-dark .eyebrow { color: var(--texto-claro); }
+.surface-dark .subtitle { color: var(--texto-claro); }
+.surface-dark a:not(.btn) { color: var(--sol); }
+.surface-dark a:not(.btn):hover { color: var(--blanco); }
+.surface-dark :focus-visible { outline-color: var(--sol); }
+
+.skip { position: absolute; left: -999px; top: 0; background: var(--sol); color: var(--pizarra); padding: 0.6rem 1rem; z-index: 100; }
+.skip:focus { left: 1rem; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Prosa larga de páginas de servicio */
+.prose { max-width: 68ch; }
+.prose h2 { font-size: clamp(1.9rem, 1.6rem + 1.6vw, 3rem); margin: 3.5rem 0 1.25rem; scroll-margin-top: calc(var(--header-h) + 1.5rem); }
+.prose h3 { margin: 2rem 0 0.6rem; }
+.prose table { border-collapse: collapse; width: 100%; margin: 1.25rem 0 2rem; font-size: var(--fs-small); }
+.prose th, .prose td { text-align: left; padding: 0.75rem 0.75rem 0.75rem 0; border-bottom: 1px solid var(--linea); vertical-align: top; }
+.prose th { font-weight: 640; }
+.prose li::marker { color: var(--pizarra-3); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* Barra de contacto móvil: reservar su altura real más el área segura. */
+@media (max-width: 47.99rem) { body { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); } }

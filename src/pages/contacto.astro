@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/ui/Button.astro';
+import { SITE, telHref, waHref } from '../data/site';
+const schema = [{ '@context': 'https://schema.org', '@type': 'ContactPage', name: 'Contacto | LIDA Energía', about: { '@id': `${SITE.url}/#empresa` } }];
+---
+<Base
+  title="Contacto: Teléfono y WhatsApp | LIDA Energía Madrid"
+  description="Contacta con LIDA Energía, instaladores de placas solares en Madrid. Teléfono y WhatsApp 641 49 55 13, email info@lidaenergia.com."
+  breadcrumbs={[{ name: 'Contacto', href: '/contacto/' }]}
+  schema={schema}
+>
+  <section class="ct" id="presupuesto">
+    <div class="wrap ct__grid">
+      <div>
+        <p class="eyebrow">Contacto</p>
+        <h1>Hablemos de tu instalación.</h1>
+        <p class="subtitle">La forma más rápida es por teléfono o WhatsApp. Te atiende el equipo que estudia tu caso.</p>
+        <a class="ct__tel" href={telHref} data-ubicacion="contacto">{SITE.phoneDisplay}</a>
+        <div class="ct__btns">
+          <Button href={telHref} size="lg" icon="phone" ubicacion="contacto">Llamar ahora</Button>
+          <Button href={waHref()} size="lg" variant="outline" icon="whatsapp" ubicacion="contacto" external>WhatsApp</Button>
+        </div>
+      </div>
+      <dl class="ct__dl">
+        <div><dt>Email</dt><dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd></div>
+        <div><dt>Horario</dt><dd>{SITE.hours}</dd></div>
+        <div><dt>Zona de trabajo</dt><dd>Madrid y Comunidad de Madrid</dd></div>
+        <div><dt>Reseñas</dt><dd><a href={SITE.googleMaps} rel="noopener" target="_blank">{SITE.rating} ★ en Google ({SITE.reviewCount} reseñas)</a></dd></div>
+        <div><dt>Instagram</dt><dd><a href={SITE.instagram} rel="noopener" target="_blank">@lidaenergia</a></dd></div>
+        <div><dt>Presupuesto</dt><dd><a href="/presupuesto-placas-solares/">Cómo pedir presupuesto</a></dd></div>
+      </dl>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ct { padding-block: clamp(2.5rem, 1.5rem + 4vw, 6rem) var(--section); }
+  .ct__grid { display: grid; gap: clamp(2.5rem, 5vw, 5rem); align-items: end; }
+  .ct h1 { max-width: 13ch; }
+  .ct__tel {
+    display: inline-block; margin: 2rem 0 1.5rem; white-space: nowrap;
+    font-size: clamp(2.2rem, 1.4rem + 3.6vw, 4.5rem); font-weight: 640; letter-spacing: -0.035em; line-height: 1;
+    color: var(--pizarra); text-decoration: none; border-bottom: 3px solid var(--sol);
+  }
+  .ct__tel:hover { color: var(--celula); }
+  .ct__btns { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .ct__dl { margin: 0; display: grid; gap: 0; background: var(--blanco); border: 1px solid var(--linea); border-radius: var(--r-media); padding: 0.5rem clamp(1.25rem, 3vw, 2rem); }
+  .ct__dl div { display: grid; grid-template-columns: 8.5rem 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--linea); }
+  .ct__dl div:last-child { border-bottom: 0; }
+  .ct__dl dt { font-weight: 640; }
+  .ct__dl dd { margin: 0; overflow-wrap: anywhere; }
+  @media (max-width: 30rem) { .ct__dl div { grid-template-columns: 1fr; gap: 0.2rem; } .ct__btns :global(.btn) { width: 100%; } }
+  @media (min-width: 64rem) { .ct__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } }
+</style>

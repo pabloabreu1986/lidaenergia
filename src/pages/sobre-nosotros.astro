@@ -1,0 +1,79 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Reviews from '../components/Reviews.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { SITE } from '../data/site';
+import tecnico from '../assets/obras/tecnico-tejado-seguridad.jpg';
+import tejado from '../assets/obras/placas-tejado-teja.jpg';
+
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'Quiénes somos | LIDA Energía',
+  about: { '@id': `${SITE.url}/#empresa` },
+}];
+---
+<Base
+  title="Quiénes Somos: Instaladores Solares en Madrid | LIDA Energía"
+  description="LIDA Energía es una empresa de instalaciones solares de Madrid dirigida por David Fernández. Trato directo, sin comerciales y con 5,0★ en Google."
+  breadcrumbs={[{ name: 'Quiénes somos', href: '/sobre-nosotros/' }]}
+  schema={schema}
+>
+  <section class="ab">
+    <div class="wrap ab__grid">
+      <div>
+        <p class="eyebrow">Quiénes somos</p>
+        <h1>Instaladores solares en Madrid, con trato directo.</h1>
+        <p class="subtitle">LIDA Energía es una empresa de Madrid dedicada a las instalaciones de energía solar, los cargadores de coche eléctrico y el mantenimiento eléctrico.</p>
+      </div>
+      <figure class="ab__media">
+        <Image src={tecnico} alt="Técnico de LIDA Energía con arnés trabajando en un tejado" widths={[480, 720, 960, 1200]} sizes="(min-width: 64rem) 42vw, 100vw" loading="eager" quality={72} />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section surface-white">
+    <div class="wrap ab__story">
+      <div class="prose">
+        <h2>De la primera llamada a la puesta en marcha</h2>
+        <p>Detrás de LIDA está <strong>{SITE.founder}</strong> y su equipo. Desde el principio nos propusimos trabajar de otra manera: sin comerciales que prometen y desaparecen, con presupuestos claros y hablando siempre con quien va a hacer la instalación. Es lo que más repiten nuestros clientes en sus reseñas.</p>
+        <p>Trabajamos en Madrid y en la Comunidad de Madrid, para particulares, comunidades de vecinos y empresas.</p>
+        <p><a href={SITE.linkedinFounder} rel="noopener" target="_blank">{SITE.founder} en LinkedIn</a></p>
+      </div>
+      <dl class="ab__vals">
+        <div><dt>Calidad</dt><dd>Planificamos cada instalación con cuidado y usamos equipos de primeras marcas para que funcione bien durante años.</dd></div>
+        <div><dt>Seriedad</dt><dd>Cumplimos los plazos que acordamos y te explicamos cada paso, desde la primera consulta hasta la puesta en marcha.</dd></div>
+        <div><dt>Seguridad</dt><dd>Trabajamos en tejados con equipos de protección y protocolos estrictos, para proteger a nuestro equipo, a tu familia y tu vivienda.</dd></div>
+      </dl>
+    </div>
+    <div class="wrap">
+      <figure class="ab__wide">
+        <Image src={tejado} alt="Placas solares instaladas por LIDA Energía en un tejado de teja" widths={[480, 960, 1440]} sizes="(min-width: 80rem) 76rem, 100vw" quality={70} />
+      </figure>
+    </div>
+  </section>
+  <Reviews />
+  <CtaBand ubicacion="cierre-nosotros" id="presupuesto" />
+</Base>
+
+<style>
+  .ab { padding-block: clamp(2.5rem, 1.5rem + 4vw, 6rem) clamp(3rem, 2rem + 4vw, 6rem); }
+  .ab__grid { display: grid; gap: clamp(2rem, 4vw, 4rem); align-items: end; }
+  .ab h1 { max-width: 16ch; }
+  .ab__media { margin: 0; }
+  .ab__media :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-media); }
+  .ab__story { display: grid; gap: 2.5rem; }
+  .ab__story h2 { font-size: var(--fs-h2); margin-bottom: 1.5rem; }
+  .ab__vals { margin: 0; display: grid; gap: 1.75rem; align-content: start; }
+  .ab__vals div { border-top: 1px solid var(--linea); padding-top: 1.1rem; }
+  .ab__vals dt { font-weight: 640; font-size: 1.2rem; margin-bottom: 0.35rem; }
+  .ab__vals dd { margin: 0; color: var(--pizarra-2); }
+  .ab__wide { margin: clamp(3rem, 6vw, 5rem) 0 0; }
+  .ab__wide :global(img) { width: 100%; aspect-ratio: 21 / 9; object-fit: cover; border-radius: var(--r-media); }
+  @media (min-width: 64rem) {
+    .ab__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+    .ab__media :global(img) { aspect-ratio: 4 / 5; }
+    .ab__story { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 5rem; }
+  }
+</style>

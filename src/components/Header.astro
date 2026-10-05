@@ -1,0 +1,187 @@
+---
+/*
+ * Port a Astro de "Navigation Bar" de Origin UI (comp-578), listado en 21st.dev como navigation-menu-4.
+ * Fuente: https://github.com/cosscom/coss/blob/main/apps/origin/registry/default/components/comp-578.tsx
+ * Copyright (c) 2025 coss.com · Originally Copyright (c) 2025 Origin UI — MIT License
+ * (texto completo en docs/21st-sources/LICENSE-originui-MIT.md).
+ * Se conserva: lista de navegación con un submenú de tipo "description" (etiqueta + descripción),
+ * enlaces simples, menú móvil en panel desplegable con títulos de grupo y separadores, y el icono
+ * hamburguesa de tres trazos que rota a "X" con aria-expanded.
+ * Modificaciones: sin React/Radix (HTML + JS mínimo), contenidos de LIDA, se quitan Sign In / Get Started
+ * y se sustituyen por un único CTA de llamada; el botón móvil va a la derecha; Escape, clic fuera y
+ * devolución del foco implementados a mano.
+ */
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-lida.jpg';
+import Icon from './Icon.astro';
+import { NAV, SERVICES, SITE, telHref } from '../data/site';
+const path = Astro.url.pathname;
+const inSolutions = SERVICES.some((s) => s.href.split('#')[0] === path);
+---
+<header class="nav" data-nav>
+  <div class="wrap nav__in">
+    <a href="/" class="nav__logo" aria-label="LIDA Energía, ir al inicio">
+      <Image src={logo} alt="LIDA Energía" width={426} height={142} widths={[150, 300]} sizes="150px" loading="eager" quality={80} />
+    </a>
+
+    <button type="button" class="btn btn--ghost btn--icon nav__toggle" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú" data-nav-toggle>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path class="nav__bar nav__bar--1" d="M4 12L20 12" />
+        <path class="nav__bar nav__bar--2" d="M4 12H20" />
+        <path class="nav__bar nav__bar--3" d="M4 12H20" />
+      </svg>
+    </button>
+
+    <nav class="nav__desk" aria-label="Principal">
+      <ul class="nav__list">
+        <li class="nav__item nav__item--sub">
+          <button type="button" class="nav__trigger" aria-expanded="false" aria-controls="sub-soluciones" data-nav-sub aria-current={inSolutions ? 'true' : undefined}>
+            Soluciones
+            <svg viewBox="0 0 16 16" aria-hidden="true" class="nav__chev"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </button>
+          <div class="nav__dropdown" id="sub-soluciones" hidden>
+            <ul>
+              {SERVICES.map((s) => (
+                <li>
+                  <a href={s.href} class="nav__dlink">
+                    <span class="nav__dlabel">{s.label}</span>
+                    <span class="nav__ddesc">{s.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </li>
+        {NAV.map((n) => (
+          <li class="nav__item"><a class="nav__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <a class="btn btn--default btn--sm nav__cta" href={telHref} data-ubicacion="cabecera">
+      <Icon name="phone" /><span>Llamar <span class="nav__num">{SITE.phoneDisplay}</span></span>
+    </a>
+
+  </div>
+
+  <div class="nav__panel" id="menu-movil" hidden>
+    <div class="wrap">
+      <p class="nav__group">Soluciones</p>
+      <ul class="nav__plist">
+        {SERVICES.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+      </ul>
+      <div class="nav__sep" role="separator" aria-orientation="horizontal"></div>
+      <ul class="nav__plist">
+        {NAV.map((n) => <li><a href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a></li>)}
+        <li><a href="/presupuesto-placas-solares/">Pedir presupuesto</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-nav]');
+  if (header) {
+    const toggle = header.querySelector<HTMLButtonElement>('[data-nav-toggle]')!;
+    const panel = document.getElementById(toggle.getAttribute('aria-controls')!)!;
+    const sub = header.querySelector<HTMLButtonElement>('[data-nav-sub]')!;
+    const dropdown = document.getElementById(sub.getAttribute('aria-controls')!)!;
+
+    const setMenu = (open: boolean, restoreFocus = false) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      panel.hidden = !open;
+      if (!open && restoreFocus) toggle.focus();
+    };
+    const setSub = (open: boolean, restoreFocus = false) => {
+      sub.setAttribute('aria-expanded', String(open));
+      dropdown.hidden = !open;
+      if (!open && restoreFocus) sub.focus();
+    };
+
+    toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+    sub.addEventListener('click', () => setSub(sub.getAttribute('aria-expanded') !== 'true'));
+
+    // Apertura por hover sólo con puntero fino (escritorio), como NavigationMenu de Radix.
+    const item = sub.parentElement!;
+    let t: number | undefined;
+    item.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { clearTimeout(t); setSub(true); } });
+    item.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') t = window.setTimeout(() => setSub(false), 150); });
+    item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget as Node)) setSub(false); });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (toggle.getAttribute('aria-expanded') === 'true') setMenu(false, true);
+      if (sub.getAttribute('aria-expanded') === 'true') setSub(false, item.contains(document.activeElement));
+    });
+    document.addEventListener('click', (e) => {
+      const target = e.target as Node;
+      if (toggle.getAttribute('aria-expanded') === 'true' && !panel.contains(target) && !toggle.contains(target)) setMenu(false);
+      if (sub.getAttribute('aria-expanded') === 'true' && !item.contains(target)) setSub(false);
+    });
+    panel.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) setMenu(false); });
+    matchMedia('(min-width: 64rem)').addEventListener('change', (m) => { if (m.matches) setMenu(false); });
+  }
+</script>
+
+<style>
+  .nav { position: sticky; top: 0; z-index: 50; background: var(--blanco); border-bottom: 1px solid var(--linea); }
+  .nav__in { display: flex; align-items: center; gap: 1.5rem; min-height: var(--header-h); }
+  .nav__logo { flex: none; display: flex; align-items: center; min-height: 48px; border-radius: 6px; }
+  .nav__logo img { width: 128px; height: auto; }
+
+  .nav__desk { display: none; margin-left: auto; }
+  .nav__list { display: flex; align-items: center; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+  .nav__item { position: relative; margin: 0; }
+  .nav__trigger, .nav__link {
+    display: inline-flex; align-items: center; gap: 0.3rem; min-height: 44px; padding: 0 0.85rem;
+    border: 0; border-radius: var(--r-control); background: none; cursor: pointer;
+    font: inherit; font-size: 0.97rem; font-weight: 550; color: var(--pizarra-2); text-decoration: none;
+    transition: color 0.18s, background-color 0.18s;
+  }
+  .nav__trigger:hover, .nav__link:hover, .nav__trigger[aria-expanded='true'] { color: var(--pizarra); background: var(--papel); }
+  .nav__link[aria-current='page'], .nav__trigger[aria-current='true'] { color: var(--pizarra); }
+  .nav__chev { width: 14px; height: 14px; transition: transform 0.2s; }
+  .nav__trigger[aria-expanded='true'] .nav__chev { transform: rotate(180deg); }
+
+  .nav__dropdown {
+    position: absolute; top: calc(100% + 0.4rem); left: 0; min-width: 21rem; padding: 0.35rem;
+    background: var(--blanco); border: 1px solid var(--linea); border-radius: 14px;
+    box-shadow: 0 12px 32px -12px rgb(23 35 46 / 0.18);
+  }
+  .nav__dropdown ul { list-style: none; margin: 0; padding: 0; }
+  .nav__dropdown li { margin: 0; }
+  .nav__dlink { display: grid; gap: 0.15rem; padding: 0.65rem 0.8rem; border-radius: 10px; text-decoration: none; color: var(--pizarra); }
+  .nav__dlink:hover { background: var(--papel); color: var(--pizarra); }
+  .nav__dlabel { font-weight: 600; font-size: 0.97rem; }
+  .nav__ddesc { font-size: 0.86rem; color: var(--pizarra-3); line-height: 1.4; }
+
+  .nav__cta { display: none; margin-left: 0.5rem; }
+  .nav__num { display: none; }
+  .nav__toggle { margin-left: auto; color: var(--pizarra); }
+  .nav__bar { transform-origin: center; transform-box: fill-box; transition: transform 0.3s cubic-bezier(0.5, 0.85, 0.25, 1.1); }
+  .nav__bar--1 { transform: translateY(-7px); }
+  .nav__bar--3 { transform: translateY(7px); }
+  .nav__toggle[aria-expanded='true'] .nav__bar--1 { transform: translateY(0) rotate(315deg); }
+  .nav__toggle[aria-expanded='true'] .nav__bar--2 { transform: rotate(45deg); }
+  .nav__toggle[aria-expanded='true'] .nav__bar--3 { transform: translateY(0) rotate(135deg); }
+
+  .nav__panel { background: var(--blanco); border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); padding-block: 0.75rem 1.25rem; max-height: calc(100dvh - var(--header-h)); overflow-y: auto; }
+  .nav__group { margin: 0.5rem 0 0.25rem; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pizarra-3); }
+  .nav__plist { list-style: none; margin: 0; padding: 0; }
+  .nav__plist li { margin: 0; }
+  .nav__plist a { display: flex; align-items: center; min-height: 48px; font-size: 1.125rem; font-weight: 560; color: var(--pizarra); text-decoration: none; }
+  .nav__plist a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: 2px; }
+  .nav__sep { height: 1px; background: var(--linea); margin: 0.6rem 0; }
+
+  @media (min-width: 48rem) {
+    .nav__cta { display: inline-flex; }
+  }
+  @media (min-width: 64rem) {
+    .nav__desk { display: block; }
+    .nav__cta { margin-left: 0.5rem; }
+    .nav__toggle, .nav__panel { display: none !important; }
+    .nav__logo img { width: 140px; }
+  }
+  @media (min-width: 80rem) { .nav__num { display: inline; } }
+</style>

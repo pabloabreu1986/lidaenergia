@@ -1,0 +1,94 @@
+---
+import Base from './Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqSection from '../components/FaqSection.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Reviews from '../components/Reviews.astro';
+import { SITE } from '../data/site';
+
+interface TocItem { href: string; label: string }
+interface Props {
+  title: string;
+  description: string;
+  eyebrow: string;
+  h1: string;
+  lead: string;
+  image: ImageMetadata;
+  alt: string;
+  slug: string;
+  crumb: string;
+  serviceName: string;
+  serviceType?: string;
+  toc?: TocItem[];
+  faqs?: { q: string; a: string }[];
+  faqTitle?: string;
+  faqDescription?: string;
+  ctaTitle?: string;
+  origen: string;
+}
+const p = Astro.props;
+const url = `${SITE.url}/${p.slug}/`;
+const schema: Record<string, unknown>[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${url}#servicio`,
+    name: p.serviceName,
+    ...(p.serviceType ? { serviceType: p.serviceType } : {}),
+    provider: { '@id': `${SITE.url}/#empresa` },
+    areaServed: SITE.areaServed.map((name) => ({ '@type': 'AdministrativeArea', name })),
+    url,
+  },
+];
+if (p.faqs?.length) {
+  schema.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: p.faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') } })),
+  });
+}
+---
+<Base title={p.title} description={p.description} breadcrumbs={[{ name: p.crumb, href: `/${p.slug}/` }]} schema={schema} ogImage={p.image}>
+  <PageHero eyebrow={p.eyebrow} title={p.h1} lead={p.lead} image={p.image} alt={p.alt} />
+
+  <div class="section surface-white svc">
+    <div class:list={['wrap', 'svc__grid', p.toc?.length && 'svc__grid--toc']}>
+      {p.toc?.length ? (
+        <nav class="svc__toc" aria-label="En esta página">
+          <p class="eyebrow">En esta página</p>
+          <ol>{p.toc.map((t) => <li><a href={t.href}>{t.label}</a></li>)}</ol>
+        </nav>
+      ) : null}
+      <article class="prose svc__body">
+        <slot />
+      </article>
+    </div>
+  </div>
+
+  {p.faqs?.length ? (
+    <FaqSection items={p.faqs} id={`faq-${p.slug}`} title={p.faqTitle ?? 'Las dudas, claras.'} description={p.faqDescription ?? 'Lo que conviene saber antes de decidir.'} />
+  ) : null}
+  <Reviews />
+  <CtaBand ubicacion={`cierre-${p.origen}`} id="presupuesto" title={p.ctaTitle} />
+</Base>
+
+<style>
+  .svc__grid { display: grid; gap: 2.5rem; }
+  .svc__toc ol { list-style: none; padding: 0; margin: 0; border-left: 1px solid var(--linea); }
+  .svc__toc li { margin: 0; }
+  .svc__toc a { display: flex; align-items: center; min-height: 40px; padding-left: 1rem; color: var(--pizarra-2); text-decoration: none; font-size: 0.95rem; }
+  .svc__toc a:hover { color: var(--pizarra); text-decoration: underline; }
+  .svc__body { max-width: none; }
+  .svc__body > :global(*:not(figure):not(table)) { max-width: 68ch; }
+  .svc__body > :global(:first-child) { margin-top: 0; }
+  /* Figuras alternadas más anchas que la columna de lectura */
+  .svc__body :global(figure) { margin: 2.5rem 0; }
+  .svc__body :global(figure img) { width: 100%; height: auto; border-radius: var(--r-media); }
+  .svc__body :global(figcaption) { margin-top: 0.75rem; font-size: 0.9rem; color: var(--pizarra-3); }
+  .svc__body :global(.lead-p) { font-size: var(--fs-sub); line-height: 1.5; color: var(--pizarra); }
+  @media (max-width: 63.99rem) { .svc__toc { padding: 1.25rem; background: var(--papel); border-radius: var(--r-media); } }
+  @media (min-width: 64rem) {
+    .svc__grid--toc { grid-template-columns: 14rem minmax(0, 1fr); gap: 5rem; }
+    .svc__toc { position: sticky; top: calc(var(--header-h) + 2rem); align-self: start; }
+  }
+</style>

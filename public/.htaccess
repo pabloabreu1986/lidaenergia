@@ -1,0 +1,41 @@
+# LIDA Energía - Hostinger (LiteSpeed/Apache)
+Options -Indexes
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Forzar https y dominio sin www en un solo salto
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^(.*)$ https://lidaenergia.com/$1 [R=301,L]
+
+# Redirecciones desde la web antigua (WordPress)
+RewriteRule ^instalaciones-fotovoltaicas/?$ /instalacion-placas-solares-madrid/ [R=301,L]
+RewriteRule ^servicios/?$ /instalacion-placas-solares-madrid/ [R=301,L]
+RewriteRule ^cargadores-de-coche/?$ /cargadores-coche-electrico/ [R=301,L]
+RewriteRule ^mantenimiento-electrico/?$ /mantenimiento-placas-solares/ [R=301,L]
+RewriteRule ^wp-sitemap.*\.xml$ /sitemap-index.xml [R=301,L]
+RewriteRule ^sitemap\.xml$ /sitemap-index.xml [R=301,L]
+
+# Contenido de ejemplo de WordPress: eliminado definitivamente
+RewriteRule ^(hola-mundo|pagina-ejemplo|blog|category/blog|author/davfernandez1980|comments/feed|feed)/?$ - [G,L]
+RewriteRule ^(wp-admin|wp-login\.php|xmlrpc\.php|wp-json) - [G,L]
+</IfModule>
+
+# Caché larga para recursos con hash
+<IfModule mod_headers.c>
+  <FilesMatch "\.(webp|avif|jpg|jpeg|png|svg|woff2|css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|xml|txt)$">
+    Header set Cache-Control "public, max-age=600"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml application/xml text/plain
+</IfModule>

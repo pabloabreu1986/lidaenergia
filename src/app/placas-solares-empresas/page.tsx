@@ -1,0 +1,83 @@
+import ServiceLayout from '@/components/ServiceLayout';
+import Picture from '@/components/Picture';
+import { pageMetadata, type Faq } from '@/lib/seo';
+import { SITE, telHref } from '@/data/site';
+
+export const metadata = pageMetadata({
+  title: "Placas Solares para Empresas y Naves en Madrid | LIDA Energía",
+  description: "Autoconsumo fotovoltaico para empresas, naves y comercios en Madrid. Estudio de consumo, instalación, legalización y mantenimiento. Llama al 641 49 55 13.",
+  path: '/placas-solares-empresas/',
+  ogImage: "placas-cubierta-nave",
+});
+
+const faqs: Faq[] = [
+  {
+    q: '¿Es rentable poner placas solares en una empresa?',
+    a: '<p>Suele serlo más que en una vivienda, porque las empresas consumen sobre todo de día, justo cuando producen las placas. Así se aprovecha casi toda la energía generada. Lo comprobamos con tus facturas antes de recomendar nada.</p>',
+  },
+  {
+    q: '¿Hay que parar la actividad durante la instalación?',
+    a: '<p>Normalmente no. El montaje en cubierta no interfiere con el trabajo diario. La conexión al cuadro eléctrico se planifica para que el corte sea mínimo y en el horario que mejor te venga.</p>',
+  },
+  {
+    q: '¿Podéis instalar placas en una nave de alquiler?',
+    a: '<p>Sí, con el permiso del propietario. Te ayudamos a preparar la información técnica para que lo pueda valorar.</p>',
+  },
+];
+
+const toc = [
+  { href: '#por-que', label: 'Por qué compensa' },
+  { href: '#que-hacemos', label: 'Qué hacemos' },
+  { href: '#cubiertas', label: 'Cubiertas y marquesinas' },
+  { href: '#recarga', label: 'Recarga para la flota' },
+];
+
+export default function Page() {
+  return (
+    <ServiceLayout
+      eyebrow="Autoconsumo para empresas · Madrid"
+      h1="Placas solares para empresas en Madrid"
+      lead="Naves, oficinas y comercios consumen de día, cuando más producen las placas. Por eso es donde más se nota el ahorro."
+      alt="Placas solares instaladas en la cubierta metálica de una nave industrial"
+      slug="placas-solares-empresas"
+      crumb="Placas solares para empresas"
+      serviceName="Instalación de placas solares para empresas"
+      toc={toc}
+      faqs={faqs}
+      faqTitle="Preguntas sobre placas solares para empresas."
+      ctaTitle="Pide presupuesto para la instalación de tu empresa."
+      faqDescription="Rentabilidad, actividad durante la obra y naves de alquiler."
+      origen="empresas"
+      image="placas-cubierta-nave"
+    >
+      <h2 id="por-que">Por qué las placas solares compensan en una empresa</h2>
+      <p className="lead-p">En una vivienda, gran parte de la energía se consume por la noche. En un negocio pasa lo contrario.</p>
+      <p>La maquinaria, la climatización y la iluminación funcionan en horario laboral, justo cuando las placas producen. Eso hace que la mayor parte de la energía generada se aproveche directamente y que la inversión se recupere antes.</p>
+      <ul>
+        <li><strong>Menos coste fijo.</strong> Una parte de la factura de luz deja de depender del precio del mercado.</li>
+        <li><strong>Cubiertas que no se usan.</strong> El tejado de la nave o el aparcamiento pasan a producir energía.</li>
+        <li><strong>Imagen de empresa.</strong> Producir tu propia energía renovable es un argumento ante clientes y en licitaciones.</li>
+      </ul>
+
+      <h2 id="que-hacemos">Cómo instalamos paneles solares en tu empresa</h2>
+      <ol>
+        <li><strong>Análisis de consumo</strong> con tus facturas y, si hace falta, con la curva de carga horaria.</li>
+        <li><strong>Visita técnica</strong> a la cubierta: estructura, sombras, accesos y cuadro eléctrico.</li>
+        <li><strong>Propuesta técnica y económica</strong> con producción estimada y plazo de retorno.</li>
+        <li><strong>Permisos y legalización</strong> ante el ayuntamiento, la Comunidad de Madrid y la distribuidora.</li>
+        <li><strong>Montaje</strong> planificado para no interrumpir tu actividad.</li>
+        <li><strong>Mantenimiento</strong> para que la instalación rinda año tras año.</li>
+      </ol>
+
+      <h2 id="cubiertas">Placas solares en cubiertas, naves y marquesinas</h2>
+      <p>Trabajamos sobre cubiertas de chapa, panel sándwich y azoteas. Si la cubierta no es adecuada, una marquesina solar en el aparcamiento puede ser la solución: da sombra a los coches y produce energía.</p>
+      <figure className="wide">
+        <Picture name="marquesina-solar" preset="content" alt="Marquesina solar sobre la zona de aparcamiento de un edificio" sizes="(min-width: 64rem) 52rem, 100vw" />
+      </figure>
+
+      <h2 id="recarga">Cargadores para la flota y para clientes</h2>
+      <p>Si tu empresa tiene vehículos eléctricos o quiere ofrecer recarga a clientes y empleados, podemos instalar <a href="/cargadores-coche-electrico/">puntos de recarga</a> conectados a la instalación solar.</p>
+      <p>Para valorar tu caso, llámanos al <a href={telHref} data-ubicacion="empresas">{SITE.phoneDisplay}</a>.</p>
+    </ServiceLayout>
+  );
+}

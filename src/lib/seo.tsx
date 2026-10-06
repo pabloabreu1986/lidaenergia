@@ -7,14 +7,17 @@ export interface Faq { q: string; a: string }
 type Json = Record<string, unknown>;
 
 /** Metadata de página: title, description, canonical, robots y Open Graph (equivalente al <head> de Base.astro). */
+const PREVIEW = process.env.PREVIEW === '1';
+
 export function pageMetadata(opts: { title: string; description: string; path: string; ogImage?: string; noindex?: boolean }): Metadata {
+  const noindex = opts.noindex || PREVIEW; // la versión de prueba nunca se indexa
   const url = new URL(opts.path, SITE.url).href;
   const image = ogImageUrl(opts.ogImage ?? 'azotea-placas-atardecer');
   return {
     title: opts.title,
     description: opts.description,
     alternates: opts.noindex ? undefined : { canonical: url },
-    robots: opts.noindex ? { index: false, follow: true } : undefined,
+    robots: noindex ? { index: false, follow: !PREVIEW } : undefined,
     openGraph: {
       type: 'website',
       locale: 'es_ES',

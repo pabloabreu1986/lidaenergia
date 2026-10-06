@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import ReactDOM from 'react-dom';
 import { SITE } from '@/data/site';
+import { withBase } from '@/lib/base';
 
 // Variantes generadas por images.config.mjs (se lee al compilar; el export es estático).
 type Variant = { w: number; h: number; src: string };
@@ -34,12 +35,12 @@ interface Props {
 export default function Picture({ name, preset, alt, sizes, priority = false, className }: Props) {
   const e = entry(name, preset);
   const largest = e.variants[e.variants.length - 1];
-  const srcSet = e.variants.map((v) => `${v.src} ${v.w}w`).join(', ');
+  const srcSet = e.variants.map((v) => `${withBase(v.src)} ${v.w}w`).join(', ');
   // Imagen LCP: precarga en <head> para que se descubra antes que el JS del framework.
-  if (priority) ReactDOM.preload(largest.src, { as: 'image', imageSrcSet: srcSet, imageSizes: sizes, fetchPriority: 'high' });
+  if (priority) ReactDOM.preload(withBase(largest.src), { as: 'image', imageSrcSet: srcSet, imageSizes: sizes, fetchPriority: 'high' });
   return (
     <img
-      src={largest.src}
+      src={withBase(largest.src)}
       srcSet={srcSet}
       sizes={sizes}
       width={e.width}

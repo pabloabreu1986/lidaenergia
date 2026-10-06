@@ -15,10 +15,12 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Icon from './Icon';
 import { NAV, SERVICES, SITE, telHref } from '@/data/site';
+import { withBase } from '@/lib/base';
 
 interface Props { logo: { src: string; srcSet: string; width: number; height: number } }
 
 export default function Header({ logo }: Props) {
+  // usePathname no incluye el basePath, igual que las rutas de NAV/SERVICES
   const path = usePathname() || '/';
   const inSolutions = SERVICES.some((s) => s.href.split('#')[0] === path);
   const [menu, setMenu] = useState(false);
@@ -59,7 +61,7 @@ export default function Header({ logo }: Props) {
   return (
     <header className="nav" data-nav>
       <div className="wrap nav__in">
-        <a href="/" className="nav__logo" aria-label="LIDA Energía, ir al inicio">
+        <a href={withBase('/')} className="nav__logo" aria-label="LIDA Energía, ir al inicio">
           <img src={logo.src} srcSet={logo.srcSet} sizes="150px" width={logo.width} height={logo.height} alt="LIDA Energía" loading="eager" decoding="async" />
         </a>
 
@@ -106,7 +108,7 @@ export default function Header({ logo }: Props) {
                 <ul>
                   {SERVICES.map((s) => (
                     <li key={s.href}>
-                      <a href={s.href} className="nav__dlink">
+                      <a href={withBase(s.href)} className="nav__dlink">
                         <span className="nav__dlabel">{s.label}</span>
                         <span className="nav__ddesc">{s.description}</span>
                       </a>
@@ -117,7 +119,7 @@ export default function Header({ logo }: Props) {
             </li>
             {NAV.map((n) => (
               <li key={n.href} className="nav__item">
-                <a className="nav__link" href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
+                <a className="nav__link" href={withBase(n.href)} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a>
               </li>
             ))}
           </ul>
@@ -132,12 +134,12 @@ export default function Header({ logo }: Props) {
         <div className="wrap">
           <p className="nav__group">Soluciones</p>
           <ul className="nav__plist">
-            {SERVICES.map((s) => <li key={s.href}><a href={s.href}>{s.label}</a></li>)}
+            {SERVICES.map((s) => <li key={s.href}><a href={withBase(s.href)}>{s.label}</a></li>)}
           </ul>
           <div className="nav__sep" role="separator" aria-orientation="horizontal" />
           <ul className="nav__plist">
-            {NAV.map((n) => <li key={n.href}><a href={n.href} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a></li>)}
-            <li><a href="/presupuesto-placas-solares/">Pedir presupuesto</a></li>
+            {NAV.map((n) => <li key={n.href}><a href={withBase(n.href)} aria-current={path === n.href ? 'page' : undefined}>{n.label}</a></li>)}
+            <li><a href={withBase('/presupuesto-placas-solares/')}>Pedir presupuesto</a></li>
           </ul>
         </div>
       </div>

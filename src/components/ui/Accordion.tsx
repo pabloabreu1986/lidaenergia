@@ -11,6 +11,7 @@
  * (hidden="until-found") para que sea indexable y encontrable con la búsqueda del navegador.
  */
 import { useEffect, useRef, useState } from 'react';
+import { htmlWithBase } from '@/lib/base';
 
 interface Item { q: string; a: string }
 interface Props { items: Item[]; id: string; headingLevel?: 'h3' | 'h4' }
@@ -61,7 +62,7 @@ export default function Accordion({ items, id, headingLevel = 'h3' }: Props) {
               // React 19 admite hidden="until-found"; el contenido sigue en el HTML.
               hidden={isOpen ? undefined : ('until-found' as unknown as boolean)}
             >
-              <div className="acc__body" dangerouslySetInnerHTML={{ __html: it.a }} />
+              <div className="acc__body" dangerouslySetInnerHTML={{ __html: htmlWithBase(it.a) }} />
             </div>
           </div>
         );

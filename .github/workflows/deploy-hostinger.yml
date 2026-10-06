@@ -1,0 +1,69 @@
+# Producción (lidaenergia.com en Hostinger). MANUAL a propósito: sustituye la web actual.
+# Lánzalo desde Actions → "Publicar en producción (Hostinger)" → Run workflow, escribiendo PUBLICAR.
+# Requisitos (Settings → Secrets and variables → Actions):
+#   HOSTINGER_SSH_HOST, HOSTINGER_SSH_PORT (Hostinger suele usar 65002), HOSTINGER_SSH_USER,
+#   HOSTINGER_SSH_KEY (clave privada de despliegue), HOSTINGER_PATH (p. ej. domains/lidaenergia.com/public_html)
+# Recomendado: Settings → Environments → "production" con revisores obligatorios.
+# Para desplegar solo en cada push a main tras el lanzamiento, añade `push: branches: [main]` en `on:`.
+name: Publicar en producción (Hostinger)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmacion:
+        description: 'Escribe PUBLICAR para confirmar que sustituye la web de lidaenergia.com'
+        required: true
+      limpiar:
+        description: 'Borrar en el servidor los archivos que no estén en la nueva web (solo tras hacer copia del WordPress)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event.inputs.confirmacion == 'PUBLICAR' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://lidaenergia.com
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Comprobar el sitio generado
+        run: node ci/check-site.mjs
+      - name: Configurar SSH
+        env:
+          SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${SSH_PORT:-65002}" "$SSH_HOST" >> ~/.ssh/known_hosts
+      - name: Subir dist/ a Hostinger
+        env:
+          SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          SSH_PORT: ${{ secrets.HOSTINGER_SSH_PORT }}
+          SSH_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          TARGET: ${{ secrets.HOSTINGER_PATH }}
+          LIMPIAR: ${{ github.event.inputs.limpiar }}
+        run: |
+          DELETE=""
+          if [ "$LIMPIAR" = "true" ]; then DELETE="--delete"; fi
+          rsync -az $DELETE -e "ssh -i ~/.ssh/deploy_key -p ${SSH_PORT:-65002}" dist/ "$SSH_USER@$SSH_HOST:$TARGET/"
+      - name: Comprobar la web publicada
+        run: |
+          curl -fsS -o /dev/null -w "lidaenergia.com → %{http_code}\n" https://lidaenergia.com/
+          curl -fsS https://lidaenergia.com/ | grep -q 'Tu tejado puede darte más' && echo "Portada nueva servida"

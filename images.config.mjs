@@ -23,7 +23,7 @@ export const IMAGES = {
 
 // aspect = ancho/alto del recorte (cover, centrado). Sin aspect se respeta la proporción original.
 export const PRESETS = {
-  hero: { widths: [400, 640, 800, 1100], quality: 58 },
+  hero: { widths: [400, 640, 800, 1100, 1400, 1600], quality: 60 },
   pagehero: { widths: [400, 640, 800, 1100], quality: 58, aspect: 4 / 3 },
   content: { widths: [480, 720, 960, 1200], quality: 64 },
   card: { widths: [480, 640, 800, 1000], quality: 62, aspect: 4 / 3 },

@@ -241,9 +241,9 @@
   .simple__btns { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-top: 2rem; }
 
 /* ---- pages/index.astro ---- */
-/* Hero */
-  .hero { padding-block: clamp(2.25rem, 1rem + 5vw, 6.5rem) clamp(3rem, 2rem + 5vw, 7rem); }
-  .hero__grid { display: grid; gap: clamp(2rem, 4vw, 4.5rem); align-items: end; }
+/* Hero: foto a sangre (borde derecho de la pantalla en escritorio, borde a borde en móvil) */
+  .hero { position: relative; padding-top: clamp(2.25rem, 1rem + 5vw, 6.5rem); }
+  .hero__grid { display: grid; }
   .hero__h1 .eyebrow { line-height: 1.4; font-stretch: 100%; }
   .hero__slogan { display: block; max-width: 9.5ch; }
   .hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.75rem; margin: 2.25rem 0 1.5rem; }
@@ -251,11 +251,14 @@
   .hero__proof:hover span:last-child { text-decoration: underline; }
   .hero__stars { display: flex; color: var(--sol-tinta); }
   .hero__stars svg { width: 1.1rem; height: 1.1rem; }
-  .hero__media { margin: 0; }
-  .hero__media img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--r-media); }
+  .hero__media { margin: clamp(2rem, 6vw, 3rem) 0 0; }
+  .hero__media img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  @media (min-width: 40rem) and (max-width: 63.99rem) { .hero__media img { aspect-ratio: 16 / 9; } }
   @media (min-width: 64rem) {
-    .hero__grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
-    .hero__media img { aspect-ratio: 4 / 5; }
+    .hero { display: flex; align-items: center; min-height: clamp(36rem, calc(100vh - var(--header-h)), 54rem); padding-block: clamp(3.5rem, 8vh, 6.5rem); }
+    .hero__text { max-width: min(46%, 38rem); }
+    .hero__media { position: absolute; inset: 0 0 0 auto; width: 50vw; margin: 0; }
+    .hero__media img { height: 100%; aspect-ratio: auto; object-position: 40% 50%; }
   }
 
   /* Soluciones */

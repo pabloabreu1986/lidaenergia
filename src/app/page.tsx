@@ -85,10 +85,10 @@ export default function Home() {
               <span><strong>{SITE.rating}</strong> en Google · {SITE.reviewCount} reseñas</span>
             </a>
           </div>
-          <figure className="hero__media">
-            <Picture name="placas-tejado-teja" preset="hero" alt="Placas solares instaladas por LIDA Energía sobre un tejado de teja, con la sierra al fondo" sizes="(min-width: 64rem) 40vw, 100vw" priority />
-          </figure>
         </div>
+        <figure className="hero__media">
+          <Picture name="placas-tejado-teja" preset="hero" alt="Placas solares instaladas por LIDA Energía sobre un tejado de teja, con la sierra al fondo" sizes="(min-width: 64rem) 75rem, 100vw" priority />
+        </figure>
       </section>
 
       <section className="section surface-white" id="soluciones" aria-labelledby="sol-h">

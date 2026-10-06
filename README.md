@@ -38,7 +38,7 @@ npm run start     # sirve dist/ en local
 | Workflow | Cuándo se ejecuta | Qué hace |
 |---|---|---|
 | `CI` (`.github/workflows/ci.yml`) | En cada push y pull request | `npm ci`, `npm run build` y `node ci/check-site.mjs`: enlaces, imágenes, CSS, un H1 por página y sin formularios |
-| `Versión de prueba (GitHub Pages)` (`preview.yml`) | En cada push a `main` | Compila con `BASE_PATH=/<repo>` y `PREVIEW=1` y publica en `https://<usuario>.github.io/<repo>/`. Todas las páginas son **noindex**, `robots.txt` bloquea la indexación y aparece una etiqueta "Versión de prueba" |
+| `Versión de prueba (GitHub Pages)` (`preview.yml`) | En cada push a `main` | Compila con `BASE_PATH=/<repo>` y `PREVIEW=1` y publica en `https://<usuario>.github.io/<repo>/`. Todas las páginas son **noindex** y `robots.txt` bloquea la indexación |
 | `Publicar en producción (Hostinger)` (`deploy-hostinger.yml`) | **Solo manual** (Actions → Run workflow, escribiendo `PUBLICAR`) | Compila, comprueba y sube `dist/` por SSH/rsync a Hostinger; luego verifica la web publicada |
 
 ### Puesta en marcha (una sola vez)

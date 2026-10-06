@@ -38,7 +38,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Footer />
         <CallBar />
         <Tracking />
-        {process.env.PREVIEW === '1' && <p className="preview-tag" role="note">Versión de prueba</p>}
       </body>
     </html>
   );
